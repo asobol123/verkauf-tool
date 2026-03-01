@@ -1,0 +1,934 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#111111" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="VerkaufTool" />
+<title>VerkaufTool</title>
+  <style>
+    :root { --b:#e8e8e8; --r:14px; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin:0; background:#fafafa; color:#111; }
+    header { position: sticky; top:0; background:#fff; border-bottom:1px solid var(--b); padding:14px 14px 10px; z-index:10; }
+    h1 { font-size:18px; margin:0 0 8px; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 14px; }
+    .card { background:#fff; border:1px solid var(--b); border-radius: var(--r); padding:12px; margin-bottom:12px; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    label { font-size:12px; opacity:.75; display:block; margin-bottom:4px; }
+    input, textarea, select { font-size:16px; padding:10px; border:1px solid var(--b); border-radius:12px; width:100%; box-sizing:border-box; }
+    textarea { min-height: 44px; resize: vertical; }
+    .col { flex: 1 1 220px; }
+    button { font-size:16px; padding:10px 12px; border-radius:12px; border:1px solid var(--b); background:#fff; cursor:pointer; }
+    button.primary { background:#111; color:#fff; border-color:#111; }
+    button.danger { border-color:#b00020; color:#b00020; }
+    .muted { opacity:.7; font-size:12px; }
+    .ok { color:#0a7a0a; }
+    .warn { color:#b36b00; }
+    .err { color:#b00020; }
+    .pill { font-size:12px; padding:4px 8px; border:1px solid var(--b); border-radius:999px; background:#fff; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { border-bottom:1px solid #f0f0f0; padding:10px 8px; text-align:left; vertical-align: top; }
+    th { font-size:12px; opacity:.7; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .right { text-align:right; }
+    .nowrap { white-space:nowrap; }
+    .small { font-size:12px; }
+    .top-actions { display:flex; gap:8px; flex-wrap:wrap; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap" style="padding:0 14px;">
+    <h1>VerkaufTool (Offline)</h1>
+    <div class="row" style="align-items:center; gap:10px; margin-top:4px;">
+      <div class="muted" id="welcomeLine"></div>
+      <button id="btnShopName" class="small" style="padding:6px 10px; border-radius:999px;">Shop ändern</button>
+    </div>
+    <div class="row">
+      <span class="pill" id="countPill">0 Verkäufe</span>
+      <span class="pill" id="lastBackupPill">Backup: —</span>
+      <span class="pill" id="photoSizePill">Fotos: 0 MB</span>
+      <span class="pill" id="queuePill">Status: Offline OK</span>
+    </div>
+    <div class="muted" id="hintLine" style="margin-top:6px;">
+      Tipp: Bluetooth-Scanner = Tastatur. Barcode-Feld aktiv lassen und scannen → Enter.
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="card">
+    <div class="row">
+      <div class="col" style="flex:2 1 300px;">
+        <label>Barcode</label>
+        <input id="barcode" class="mono" inputmode="numeric" autocomplete="off" placeholder="Scannen oder eingeben" />
+      </div>
+      <div class="col" style="max-width: 180px;">
+        <label>Preis (€)</label>
+        <input id="price" inputmode="decimal" placeholder="z.B. 49,99" />
+      </div>
+    </div>
+    <div class="row" style="margin-top:10px;">
+      <div class="col">
+        <label>Notiz (optional)</label>
+        <textarea id="note" placeholder="z.B. Bar / kleiner Fleck / Kunde XY"></textarea>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+      <div class="top-actions" style="width:100%;">
+        <button id="btnPhotos">Fotos hinzufügen (0/3)</button>
+        <input id="photoInput" type="file" accept="image/*" multiple capture="environment" style="display:none;" />
+        <div style="display:flex;flex-direction:column;gap:4px;min-width:160px;">
+          <label style="margin:0;">Zahlung</label>
+          <select id="paymentMethod" style="min-width:160px;">
+            <option value="Bar" selected>Bar</option>
+            <option value="Karte">Karte</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="photoPreview" style="display:none; width:100%; margin-top:10px;"></div>
+
+    <div class="row" style="margin-top:10px;">
+      <div class="top-actions">
+        <button class="primary" id="btnAdd">Verkauft speichern</button>
+        <button id="btnReturn">Rückgabe</button>
+        <button id="btnExport">Export CSV</button>
+        <button id="btnExportAll">Export alles</button>
+        <button class="danger" id="btnClear">Alles löschen</button>
+      </div>
+      <div class="muted" id="statusMsg" style="flex:1 1 240px;"></div>
+    </div>
+
+    <div class="muted" style="margin-top:10px;">
+      Backup-Empfehlung: alle 3 Tage oder alle 100 Verkäufe → „Export CSV“.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div class="col">
+        <label>Suche (Barcode / Notiz)</label>
+        <input id="search" placeholder="suchen..." />
+      </div>
+      <div class="col" style="max-width:220px;">
+        <label>Ansicht</label>
+        <select id="viewMode">
+          <option value="latest">Neueste zuerst</option>
+          <option value="oldest">Älteste zuerst</option>
+        </select>
+      </div>
+      <div class="col" style="max-width:220px;">
+        <label>Limit</label>
+        <select id="limit">
+          <option value="50">50</option>
+          <option value="100" selected>100</option>
+          <option value="200">200</option>
+          <option value="9999">Alle</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="overflow:auto; margin-top:10px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Zeit</th>
+            <th>Barcode</th>
+            <th class="right">Preis</th>
+            <th>Zahlung</th>
+            <th>Notiz</th>
+            <th class="right">Aktion</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script>
+/** -----------------------------
+ *  IndexedDB helper (без библиотек)
+ *  ----------------------------- */
+const DB_NAME = "verkauf_tool_db";
+const DB_VER  = 2;
+const STORE   = "sales";
+const STORE_PHOTOS = "photos";
+
+function openDb() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(STORE)) {
+        const st = db.createObjectStore(STORE, { keyPath: "id" });
+        st.createIndex("ts", "ts", { unique: false });
+        st.createIndex("barcode", "barcode", { unique: false });
+      }
+      if (!db.objectStoreNames.contains(STORE_PHOTOS)) {
+        const pst = db.createObjectStore(STORE_PHOTOS, { keyPath: "id" });
+        pst.createIndex("saleId", "saleId", { unique: false });
+        pst.createIndex("barcode", "barcode", { unique: false });
+      }
+};
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function dbTxStore(storeName, mode, fn) {
+  const db = await openDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(storeName, mode);
+    const st = tx.objectStore(storeName);
+    const res = fn(st);
+    tx.oncomplete = () => resolve(res);
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function dbTx(mode, fn) {
+  return dbTxStore(STORE, mode, fn);
+}
+
+
+function nowIso() {
+  const d = new Date();
+  // локальное время в ISO-подобном виде
+  const pad = (n)=>String(n).padStart(2,"0");
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
+function uid() {
+  // достаточно уникально для офлайна
+  return `${Date.now()}_${Math.random().toString(16).slice(2)}`;
+}
+
+/** -----------------------------
+ *  UI
+ *  ----------------------------- */
+const $ = (id)=>document.getElementById(id);
+
+
+// --- Shop Name (einmalig pro Gerät) ---
+const SHOP_KEY = "shopName";
+function getOrAskShopName() {
+  let name = (localStorage.getItem(SHOP_KEY) || "").trim();
+  if (!name) {
+    name = (prompt("Shop Name eingeben (einmalig):") || "").trim();
+    if (!name) name = "Shop";
+    localStorage.setItem(SHOP_KEY, name);
+  }
+  return name;
+}
+function setWelcome(name) {
+  const el = document.getElementById("welcomeLine");
+  if (el) el.textContent = `Herzlich willkommen, ${name}`;
+}
+
+function changeShopName() {
+  let name = (prompt("Neuen Shop Name eingeben:") || "").trim();
+  if (!name) return;
+  localStorage.setItem(SHOP_KEY, name);
+  setWelcome(name);
+  setStatus("Shop Name aktualisiert.", "ok");
+}
+
+
+// --- Fotos (max 3) ---
+let selectedFiles = []; // оригинальные File-объекты
+function updatePhotoButton() {
+  const btn = document.getElementById("btnPhotos");
+  if (btn) btn.textContent = `Fotos hinzufügen (${selectedFiles.length}/3)`;
+  const prev = document.getElementById("photoPreview");
+  if (!prev) return;
+  if (selectedFiles.length === 0) {
+    prev.style.display = "none";
+    prev.innerHTML = "";
+    return;
+  }
+  prev.style.display = "block";
+  prev.innerHTML = selectedFiles.map((f, i) => `
+    <div style="display:flex;align-items:center;gap:10px;border:1px solid #eee;border-radius:12px;padding:8px;margin:6px 0;">
+      <div style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">📷 ${escapeHtml(f.name || ("photo_"+(i+1)))}</div>
+      <button class="danger small" data-rm="${i}">Entfernen</button>
+    </div>
+  `).join("");
+  prev.querySelectorAll("button[data-rm]").forEach(b => {
+    b.addEventListener("click", () => {
+      const idx = Number(b.getAttribute("data-rm"));
+      selectedFiles.splice(idx, 1);
+      updatePhotoButton();
+    });
+  });
+}
+
+// Компрессия фото (важно для iOS)
+async function compressImageToJpegBlob(file, maxWidth = 1280, quality = 0.75) {
+  const img = await new Promise((resolve, reject) => {
+    const i = new Image();
+    i.onload = () => resolve(i);
+    i.onerror = reject;
+    i.src = URL.createObjectURL(file);
+  });
+
+  const scale = Math.min(1, maxWidth / img.width);
+  const w = Math.round(img.width * scale);
+  const h = Math.round(img.height * scale);
+
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0, w, h);
+
+  const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", quality));
+  return blob;
+}
+
+const state = {
+  items: [],
+  count: 0,
+  photoBytes: 0,
+  photoCount: 0,
+  lastBackupAt: localStorage.getItem("lastBackupAt") || "",
+  lastBackupCount: Number(localStorage.getItem("lastBackupCount") || "0"),
+};
+
+function setStatus(msg, kind="muted") {
+  const el = $("statusMsg");
+  el.className = kind === "ok" ? "ok" : kind === "err" ? "err" : "muted";
+  el.textContent = msg;
+}
+
+function parsePrice(str) {
+  // поддержка "49,99" и "49.99"
+  const s = (str || "").trim().replace(",", ".");
+  if (!s) return NaN;
+  const n = Number(s);
+  return Number.isFinite(n) ? n : NaN;
+}
+
+function fmtPrice(n) {
+  if (!Number.isFinite(n)) return "";
+  return n.toFixed(2);
+}
+
+function formatMb(bytes) {
+  return (bytes / (1024 * 1024)).toFixed(1);
+}
+
+// Верхние границы для фото (консервативно для iOS)
+const PHOTO_WARN_MB = 35;   // предупреждение
+const PHOTO_LIMIT_MB = 50;  // красная зона
+
+async function refreshPhotoStats() {
+  try {
+    const photos = await dbTxStore(STORE_PHOTOS, "readonly", (st) => {
+      return new Promise((resolve, reject) => {
+        const req = st.getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => reject(req.error);
+      });
+    });
+
+    let bytes = 0;
+    for (const p of photos) {
+      if (p && p.blob && typeof p.blob.size === "number") bytes += p.blob.size;
+    }
+    state.photoBytes = bytes;
+    state.photoCount = photos.length;
+  } catch {
+    state.photoBytes = 0;
+    state.photoCount = 0;
+  }
+}
+
+function updatePills() {
+  $("countPill").textContent = `${state.count} Verkäufe`;
+
+  const lb = state.lastBackupAt ? state.lastBackupAt : "—";
+  $("lastBackupPill").textContent = `Backup: ${lb}`;
+
+  const mb = Number(formatMb(state.photoBytes));
+  const photoPill = $("photoSizePill");
+  if (photoPill) {
+    photoPill.textContent = `Fotos: ${mb} MB (${state.photoCount})`;
+    photoPill.classList.remove("warn", "err");
+    if (mb >= PHOTO_LIMIT_MB) photoPill.classList.add("err");
+    else if (mb >= PHOTO_WARN_MB) photoPill.classList.add("warn");
+  }
+
+  // просто информируем о сети
+  $("queuePill").textContent = navigator.onLine ? "Status: Online" : "Status: Offline OK";
+}
+
+function escapeHtml(s) {
+  return String(s ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function render() {
+  const q = $("search").value.trim().toLowerCase();
+  const mode = $("viewMode").value;
+  const limit = Number($("limit").value);
+
+  let list = state.items.slice();
+
+  if (q) {
+    list = list.filter(x => {
+      const hay = `${x.barcode} ${x.note ?? ""}`.toLowerCase();
+      return hay.includes(q);
+    });
+  }
+
+  list.sort((a,b)=> mode === "latest" ? (b.ts - a.ts) : (a.ts - b.ts));
+  if (limit !== 9999) list = list.slice(0, limit);
+
+  const tb = $("tbody");
+  tb.innerHTML = "";
+
+  for (const it of list) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="nowrap small">${escapeHtml(it.time)}</td>
+      <td class="mono">${escapeHtml(it.barcode)}</td>
+      <td class="right nowrap">${escapeHtml(fmtPrice(it.price))} €</td>
+      <td class="small">${escapeHtml(it.payment || "")}</td>
+      <td class="small">${escapeHtml(it.note || "")}</td>
+      <td class="right">
+        <button class="danger small" data-del="${it.id}">Löschen</button>
+      </td>
+    `;
+    tb.appendChild(tr);
+  }
+
+  tb.querySelectorAll("button[data-del]").forEach(btn => {
+  btn.addEventListener("click", async () => {
+    const id = btn.getAttribute("data-del");
+    const item = state.items.find(x => x.id === id);
+
+    if (!item) return;
+
+    const confirmDelete = confirm(
+      `Verkauf wirklich löschen?\n\n` +
+      `Barcode: ${item.barcode}\n` +
+      `Preis: ${fmtPrice(item.price)} €\n` +
+      `Zeit: ${item.time}`
+    );
+
+    if (!confirmDelete) return;
+
+    await deleteById(id);
+  });
+});
+}
+
+async function loadAll() {
+  const items = await dbTx("readonly", (st) => {
+    return new Promise((resolve, reject) => {
+      const req = st.getAll();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+  });
+
+  state.items = items;
+  state.count = items.length;
+  await refreshPhotoStats();
+  refreshPhotoStats().then(updatePills);
+  render();
+
+  maybeRemindBackup();
+}
+
+async function addSale() {
+  const barcode = $("barcode").value.trim();
+  const price = parsePrice($("price").value);
+  const note = $("note").value.trim();
+  const payment = ($("paymentMethod")?.value || "Bar").trim();
+
+  if (!barcode) {
+    setStatus("Barcode ist leer.", "err");
+    $("barcode").focus();
+    return;
+  }
+  if (!Number.isFinite(price) || price <= 0) {
+    setStatus("Preis ist ungültig.", "err");
+    $("price").focus();
+    $("price").select();
+    return;
+  }
+
+    // умная защита от двойной продажи
+  const last = findLastSaleByBarcode(barcode);
+  if (last) {
+    const msg =
+      `Achtung: Dieser Barcode wurde bereits verkauft.\n\n` +
+      `Letzter Eintrag:\n` +
+      `Zeit: ${last.time}\n` +
+      `Preis: ${fmtPrice(last.price)} €\n` +
+      `Notiz: ${(last.note || "—")}\n\n` +
+      `OK = trotzdem speichern\n` +
+      `Abbrechen = Optionen`;
+
+    const forceSave = confirm(msg);
+
+    if (!forceSave) {
+      const doReturn = confirm(
+        `Möchtest du stattdessen eine Rückgabe machen?\n\n` +
+        `OK = Rückgabe (letzten Eintrag löschen)\n` +
+        `Abbrechen = nichts tun`
+      );
+
+      if (doReturn) {
+        await deleteById(last.id);
+        setStatus(`Rückgabe durchgeführt: ${barcode}`, "ok");
+      } else {
+        setStatus("Abgebrochen: Doppelverkauf verhindert.", "err");
+      }
+
+      $("barcode").focus();
+      $("barcode").select();
+      return;
+    }
+  }
+
+  // Fotos verarbeiten (optional)
+  const photoIds = [];
+  const photoFiles = [];
+  if (selectedFiles.length > 0) {
+    // max 3
+    const files = selectedFiles.slice(0, 3);
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i];
+      try {
+        const blob = await compressImageToJpegBlob(f, 1280, 0.75);
+        if (!blob) continue;
+        const tsLabel = nowIso().replaceAll(" ", "_").replaceAll(":", "-");
+        const fileName = `${barcode}_${tsLabel}_${i+1}.jpg`;
+        const pid = uid();
+        await dbTxStore(STORE_PHOTOS, "readwrite", (st) => st.put({
+          id: pid,
+          saleId: null, // заполним после создания продажи
+          barcode,
+          fileName,
+          blob
+        }));
+        photoIds.push(pid);
+        photoFiles.push(`photos/${fileName}`);
+      } catch (e) {
+        console.warn("photo compress/save failed", e);
+      }
+    }
+  }
+
+  const item = {
+    id: uid(),
+    barcode,
+    price,
+    note,
+    payment,
+    ts: Date.now(),
+    time: nowIso(),
+    photoIds,
+    photoFiles
+  };
+
+  await dbTx("readwrite", (st) => st.put(item));
+  // Fotos mit saleId verknüpfen
+  if (item.photoIds && item.photoIds.length > 0) {
+    for (const pid of item.photoIds) {
+      await dbTxStore(STORE_PHOTOS, "readwrite", (st) => {
+        return new Promise((resolve, reject) => {
+          const r = st.get(pid);
+          r.onsuccess = () => {
+            const rec = r.result;
+            if (rec) { rec.saleId = item.id; st.put(rec); }
+            resolve();
+          };
+          r.onerror = () => reject(r.error);
+        });
+      });
+    }
+  }
+  state.items.push(item);
+  state.count++;
+
+  setStatus(`Gespeichert: ${barcode}`, "ok");
+
+  // UX: очистка и фокус на barcode
+  $("barcode").value = "";
+  $("price").value = "";
+  $("note").value = "";
+  selectedFiles = [];
+  updatePhotoButton();
+  $("barcode").focus();
+
+  await refreshPhotoStats();
+  updatePills();
+  render();
+  maybeRemindBackup();
+}
+
+async function deleteById(id) {
+  // сначала найдём запись, чтобы удалить её фото
+  const sale = state.items.find(x => x.id === id);
+
+  await dbTx("readwrite", (st) => st.delete(id));
+
+  // удаляем фото этой продажи
+  if (sale && sale.photoIds && sale.photoIds.length > 0) {
+    for (const pid of sale.photoIds) {
+      await dbTxStore(STORE_PHOTOS, "readwrite", (st) => st.delete(pid));
+    }
+  }
+
+  state.items = state.items.filter(x => x.id !== id);
+  state.count = state.items.length;
+  setStatus("Eintrag gelöscht.", "ok");
+  updatePills();
+  render();
+}
+
+async function returnByBarcode() {
+  const barcode = $("barcode").value.trim();
+  if (!barcode) {
+    setStatus("Für Rückgabe: Barcode eingeben/scannen.", "err");
+    $("barcode").focus();
+    return;
+  }
+
+  const candidates = state.items.filter(x => x.barcode === barcode);
+  if (candidates.length === 0) {
+    setStatus("Kein Verkauf mit diesem Barcode gefunden.", "err");
+    $("barcode").focus();
+    $("barcode").select();
+    return;
+  }
+
+  candidates.sort((a,b)=> b.ts - a.ts);
+  const target = candidates[0];
+
+  const ok = confirm(
+    `Rückgabe wirklich durchführen?
+
+` +
+    `Barcode: ${target.barcode}
+` +
+    `Preis: ${fmtPrice(target.price)} €
+` +
+    `Zeit: ${target.time}`
+  );
+  if (!ok) {
+    setStatus("Abgebrochen.", "muted");
+    $("barcode").focus();
+    $("barcode").select();
+    return;
+  }
+
+  await deleteById(target.id);
+
+  setStatus(`Rückgabe: ${barcode} entfernt.`, "ok");
+  $("barcode").value = "";
+  $("barcode").focus();
+}
+
+function toCsv(items) {
+  const header = ["shopName","time","barcode","price","payment","note","photoCount","photoFiles"];
+  const rows = items
+    .slice()
+    .sort((a,b)=> a.ts - b.ts)
+    .map(x => [
+      (localStorage.getItem(SHOP_KEY) || "").trim(),
+      x.time,
+      x.barcode,
+      fmtPrice(x.price),
+      (x.payment || ""),
+      (x.note ?? "").replaceAll("\n"," ").trim(),
+      String((x.photoFiles || []).length),
+      (x.photoFiles || []).join("|")
+    ]);
+
+  const escapeCsv = (v) => {
+    const s = String(v ?? "");
+    if (s.includes('"') || s.includes(";") || s.includes("\n")) {
+      return `"${s.replaceAll('"','""')}"`;
+    }
+    return s;
+  };
+
+  const lines = [header.map(escapeCsv).join(";")];
+  for (const r of rows) lines.push(r.map(escapeCsv).join(";"));
+  return lines.join("\n");
+}
+
+function downloadFile(name, mime, content) {
+  const blob = (content instanceof Blob) ? content : new Blob([content], { type: mime });
+const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  setTimeout(()=>URL.revokeObjectURL(url), 1500);
+}
+
+function exportCsv(isBackup=false) {
+  const items = state.items;
+  const csv = toCsv(items);
+  const stamp = new Date();
+  const pad=(n)=>String(n).padStart(2,"0");
+  const file = `verkaeufe_${stamp.getFullYear()}-${pad(stamp.getMonth()+1)}-${pad(stamp.getDate())}_${pad(stamp.getHours())}${pad(stamp.getMinutes())}.csv`;
+
+  downloadFile(file, "text/csv;charset=utf-8", "\ufeff" + csv);
+
+  // отметим последний бэкап
+  state.lastBackupAt = nowIso();
+  localStorage.setItem("lastBackupAt", state.lastBackupAt);
+  localStorage.setItem("lastBackupCount", String(state.count));
+  state.lastBackupCount = state.count;
+
+  updatePills();
+  setStatus(isBackup ? "Backup CSV erstellt." : "CSV exportiert.", "ok");
+}
+
+
+async function exportZip() {
+  // JSZip должен быть загружен
+  if (typeof JSZip === "undefined") {
+    setStatus("ZIP-Library nicht geladen. Bitte einmal online öffnen und neu laden.", "err");
+    return;
+  }
+
+  if (state.items.length === 0) {
+    setStatus("Keine Verkäufe zum Export.", "err");
+    return;
+  }
+
+  setStatus("ZIP wird erstellt…", "muted");
+
+  try {
+    const zip = new JSZip();
+    const photosFolder = zip.folder("photos");
+
+    // Hinweis: CSV wird separat exportiert (nicht im ZIP)
+
+    // Добавляем фото
+    // Собираем уникальные photoIds из всех продаж
+    const allPhotoIds = [];
+    for (const s of state.items) {
+      for (const pid of (s.photoIds || [])) allPhotoIds.push(pid);
+    }
+
+    if (allPhotoIds.length > 0) {
+      // читаем пачкой
+      const photoRecords = await dbTxStore(STORE_PHOTOS, "readonly", (st) => {
+        return new Promise((resolve, reject) => {
+          const req = st.getAll();
+          req.onsuccess = () => resolve(req.result || []);
+          req.onerror = () => reject(req.error);
+        });
+      });
+
+      const needed = new Set(allPhotoIds);
+      for (const p of photoRecords) {
+        if (!needed.has(p.id)) continue;
+        // p.blob должен быть Blob
+        photosFolder.file(p.fileName, p.blob);
+      }
+    }
+
+    const stamp = new Date();
+    const pad=(n)=>String(n).padStart(2,"0");
+    const fileName = `photos_export_${stamp.getFullYear()}-${pad(stamp.getMonth()+1)}-${pad(stamp.getDate())}_${pad(stamp.getHours())}${pad(stamp.getMinutes())}.zip`;
+
+    const blob = await zip.generateAsync({ type: "blob" });
+
+    downloadFile(fileName, "application/zip", blob);
+
+    // отметим последний бэкап
+    state.lastBackupAt = nowIso();
+    localStorage.setItem("lastBackupAt", state.lastBackupAt);
+    localStorage.setItem("lastBackupCount", String(state.count));
+    state.lastBackupCount = state.count;
+    updatePills();
+
+    setStatus("Fotos-ZIP exportiert.", "ok");
+  } catch (err) {
+    console.error(err);
+    setStatus("Fehler beim ZIP-Export.", "err");
+  }
+}
+
+
+function maybeRemindBackup() {
+  // напоминание: каждые 100 продаж или каждые 3 дня
+  const COUNT_STEP = 100;
+  const DAYS_STEP  = 3;
+
+  // Если бэкап ещё ни разу не делали, не показываем предупреждение сразу при первом открытии.
+  // Ставим "базовую точку" на текущее количество продаж и начинаем считать с неё.
+  if (!state.lastBackupAt) {
+    const baselineSet = localStorage.getItem("backupBaselineSet");
+    if (!baselineSet) {
+      state.lastBackupCount = state.count;
+      localStorage.setItem("lastBackupCount", String(state.lastBackupCount));
+      localStorage.setItem("backupBaselineSet", "1");
+      localStorage.setItem("backupBaselineAt", nowIso());
+    }
+  }
+
+  const lastCount = state.lastBackupCount || 0;
+  const needByCount = (state.count - lastCount) >= COUNT_STEP;
+
+  let needByDays = false;
+  const last = state.lastBackupAt;
+  if (last) {
+    // last is "YYYY-MM-DD HH:mm:ss"
+    const d = new Date(last.replace(" ", "T"));
+    if (!Number.isNaN(d.getTime())) {
+      const diffDays = (Date.now() - d.getTime()) / (1000*60*60*24);
+      needByDays = diffDays >= DAYS_STEP;
+    }
+  } else {
+    // если ни разу не делали backup — напоминаем, только если прошло DAYS_STEP дней с момента первой установки/базовой точки
+    const baselineAt = localStorage.getItem("backupBaselineAt");
+    if (baselineAt) {
+      const d0 = new Date(baselineAt.replace(" ", "T"));
+      if (!Number.isNaN(d0.getTime())) {
+        const diffDays = (Date.now() - d0.getTime()) / (1000*60*60*24);
+        needByDays = diffDays >= DAYS_STEP;
+      }
+    } else {
+      needByDays = false;
+    }
+  }
+
+  if (needByCount || needByDays) {
+    $("hintLine").innerHTML =
+      `⚠️ Empfehlung: Bitte <b>Export CSV</b> machen (Backup). ` +
+      `Verkäufe seit letztem Backup: <b>${state.count - lastCount}</b>.`;
+  } else {
+    $("hintLine").textContent =
+      "Tipp: Bluetooth-Scanner = Tastatur. Barcode-Feld aktiv lassen und scannen → Enter.";
+  }
+}
+
+async function clearAll() {
+  const first = confirm("Wirklich ALLES löschen? (Diese Aktion kann nicht rückgängig gemacht werden.)");
+  if (!first) return;
+  const second = confirm("Letzte Warnung: Wirklich ALLES löschen?");
+  if (!second) return;
+
+  // Verkäufe + Fotos löschen
+  await dbTxStore(STORE_PHOTOS, "readwrite", (st) => st.clear());
+  await dbTx("readwrite", (st) => st.clear());
+
+  state.items = [];
+  state.count = 0;
+  selectedFiles = [];
+  updatePhotoButton();
+  await refreshPhotoStats();
+  updatePills();
+  render();
+  setStatus("Alles gelöscht.", "ok");
+}
+
+// events
+$("btnAdd").addEventListener("click", addSale);
+$("btnPhotos").addEventListener("click", () => $("photoInput").click());
+$("photoInput").addEventListener("change", (e) => {
+  const files = Array.from(e.target.files || []);
+  for (const f of files) {
+    if (selectedFiles.length >= 3) break;
+    selectedFiles.push(f);
+  }
+  // reset input so same photo can be re-selected
+  e.target.value = "";
+  updatePhotoButton();
+});
+
+$("btnReturn").addEventListener("click", returnByBarcode);
+$("btnExport").addEventListener("click", () => exportCsv(false));
+$("btnExportAll").addEventListener("click", async () => {
+  // сначала CSV отдельно (с BOM для Excel)
+  exportCsv(false);
+  // затем ZIP (nur Fotos)
+  await exportZip();
+  setStatus("Alles exportiert (CSV + Fotos-ZIP).", "ok");
+});
+$("btnClear").addEventListener("click", clearAll);
+$("btnShopName").addEventListener("click", changeShopName);
+
+
+$("search").addEventListener("input", render);
+$("viewMode").addEventListener("change", render);
+$("limit").addEventListener("change", render);
+
+// Enter flow:
+// - если фокус в barcode и есть price -> сохранить
+// - если фокус в price -> сохранить
+$("barcode").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    // после скана часто приходит Enter
+    $("price").focus();
+    $("price").select();
+  }
+});
+$("price").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") addSale();
+});
+
+window.addEventListener("online", updatePills);
+window.addEventListener("offline", updatePills);
+
+// init
+loadAll().then(() => {
+  const shopName = getOrAskShopName();
+  setWelcome(shopName);
+  updatePhotoButton();
+
+  $("barcode").focus();
+  updatePills();
+  setStatus("Bereit.", "muted");
+});
+
+function findLastSaleByBarcode(barcode) {
+  const matches = state.items.filter(x => x.barcode === barcode);
+  if (matches.length === 0) return null;
+  matches.sort((a,b) => b.ts - a.ts);
+  return matches[0];
+}
+
+</script>
+
+<script>
+  // PWA service worker
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+    });
+  }
+</script>
+
+</body>
+</html>
