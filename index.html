@@ -3,932 +3,966 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#111111" />
+  <meta name="theme-color" content="#2563eb" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="VerkaufTool" />
-<title>VerkaufTool</title>
+  <meta name="apple-mobile-web-app-title" content="VerkaufsTool" />
+  <title>VerkaufsTool</title>
   <style>
-    :root { --b:#e8e8e8; --r:14px; }
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin:0; background:#fafafa; color:#111; }
-    header { position: sticky; top:0; background:#fff; border-bottom:1px solid var(--b); padding:14px 14px 10px; z-index:10; }
-    h1 { font-size:18px; margin:0 0 8px; }
-    .wrap { max-width: 980px; margin: 0 auto; padding: 14px; }
-    .card { background:#fff; border:1px solid var(--b); border-radius: var(--r); padding:12px; margin-bottom:12px; }
-    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    label { font-size:12px; opacity:.75; display:block; margin-bottom:4px; }
-    input, textarea, select { font-size:16px; padding:10px; border:1px solid var(--b); border-radius:12px; width:100%; box-sizing:border-box; }
-    textarea { min-height: 44px; resize: vertical; }
-    .col { flex: 1 1 220px; }
-    button { font-size:16px; padding:10px 12px; border-radius:12px; border:1px solid var(--b); background:#fff; cursor:pointer; }
-    button.primary { background:#111; color:#fff; border-color:#111; }
-    button.danger { border-color:#b00020; color:#b00020; }
-    .muted { opacity:.7; font-size:12px; }
-    .ok { color:#0a7a0a; }
-    .warn { color:#b36b00; }
-    .err { color:#b00020; }
-    .pill { font-size:12px; padding:4px 8px; border:1px solid var(--b); border-radius:999px; background:#fff; }
-    table { width:100%; border-collapse: collapse; }
-    th, td { border-bottom:1px solid #f0f0f0; padding:10px 8px; text-align:left; vertical-align: top; }
-    th { font-size:12px; opacity:.7; }
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-    .right { text-align:right; }
-    .nowrap { white-space:nowrap; }
-    .small { font-size:12px; }
-    .top-actions { display:flex; gap:8px; flex-wrap:wrap; }
+    :root{
+      --bg:#f4f6fb;
+      --card:#ffffff;
+      --border:#e6eaf2;
+      --text:#0f172a;
+      --muted:#64748b;
+      --primary:#2563eb;
+      --primary-600:#1d4ed8;
+      --primary-50:#eff5ff;
+      --ok:#16a34a;
+      --warn:#d97706;
+      --err:#dc2626;
+      --shadow: 0 1px 2px rgba(15,23,42,.04), 0 4px 16px rgba(15,23,42,.06);
+      --r:14px;
+      --r-lg:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .wrap{max-width:780px;margin:0 auto;padding:14px;}
+    /* Header */
+    .app-header{
+      display:flex;align-items:center;gap:12px;
+      background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);
+      padding:14px;box-shadow:var(--shadow);margin-bottom:14px;
+    }
+    .logo{
+      width:44px;height:44px;border-radius:12px;
+      background:linear-gradient(135deg,var(--primary),#60a5fa);
+      display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;
+      box-shadow:0 6px 14px -4px rgba(37,99,235,.55);
+    }
+    .logo svg{width:24px;height:24px}
+    .app-title{font-size:17px;font-weight:700;line-height:1.1;margin:0}
+    .app-sub{font-size:12px;color:var(--muted);margin-top:2px}
+    .icon-btn{
+      margin-left:auto;background:var(--primary-50);color:var(--primary);
+      border:none;border-radius:12px;padding:9px 11px;cursor:pointer;
+      display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;
+    }
+    .icon-btn:active{background:#dbe7fe}
+    .icon-btn svg{width:16px;height:16px}
+
+    /* Cards */
+    .card{
+      background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);
+      padding:14px;box-shadow:var(--shadow);margin-bottom:14px;
+    }
+    .section-title{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin:0 0 10px;}
+    h2.h{font-size:16px;font-weight:700;margin:0 0 12px;}
+
+    /* Stats grid */
+    .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+    @media(min-width:520px){.stats{grid-template-columns:repeat(3,minmax(0,1fr));}}
+    .stats-compact{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;}
+    .stats-compact .stat{padding:6px 8px;min-height:0;gap:2px;border-radius:10px;}
+    .stats-compact .stat-row{font-size:10px;}
+    .stats-compact .stat-val{font-size:14px;}
+    .stat{
+      background:#fafbfd;border:1px solid var(--border);border-radius:14px;padding:12px;
+      display:flex;flex-direction:column;gap:4px;min-height:74px;
+    }
+    .stat-row{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;font-weight:600;}
+    .stat-row svg{width:14px;height:14px}
+    .stat-val{font-size:20px;font-weight:700;color:var(--text);line-height:1.1;}
+    .stat-sub{font-size:11px;color:var(--muted)}
+    .stat.ok .stat-row{color:var(--ok)}
+    .stat.warn .stat-row{color:var(--warn)}
+    .stat.err .stat-row{color:var(--err)}
+
+    /* Tabs */
+    .tabs{
+      display:flex;background:#eef1f7;padding:4px;border-radius:14px;gap:4px;margin-bottom:14px;
+    }
+    .tab{
+      flex:1;text-align:center;padding:10px;border-radius:11px;font-size:14px;font-weight:600;
+      color:var(--muted);cursor:pointer;border:none;background:transparent;transition:.15s;
+    }
+    .tab.active{background:#fff;color:var(--primary);box-shadow:0 1px 3px rgba(15,23,42,.08);}
+
+    /* Form */
+    label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:0 0 6px;}
+    input,textarea,select{
+      width:100%;font-size:16px;padding:12px 13px;border:1px solid var(--border);border-radius:12px;
+      background:#fff;color:var(--text);font-family:inherit;outline:none;transition:border-color .15s, box-shadow .15s;
+    }
+    input:focus,textarea:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.15);}
+    textarea{min-height:60px;resize:vertical;}
+    .field{margin-bottom:10px;}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    @media(max-width:420px){.grid-2{grid-template-columns:1fr;}}
+
+    /* Pay segmented */
+    .pay{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .pay button{
+      padding:12px;border:1px solid var(--border);background:#fff;border-radius:12px;
+      font-weight:600;font-size:14px;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;
+    }
+    .pay button.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+    .pay button svg{width:16px;height:16px}
+
+    /* Buttons */
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:6px;
+      padding:12px 14px;border-radius:12px;font-size:15px;font-weight:600;
+      border:1px solid var(--border);background:#fff;color:var(--text);cursor:pointer;width:100%;
+    }
+    .btn.primary{background:var(--primary);border-color:var(--primary);color:#fff;}
+    .btn.primary:active{background:var(--primary-600);}
+    .btn.danger{background:#fff;color:var(--err);border-color:#fecaca;}
+    .btn.ghost{background:transparent;}
+    .btn svg{width:16px;height:16px}
+    .btn-row{display:flex;gap:8px;}
+
+    /* Photos */
+    .photo-btn{
+      width:100%;padding:12px;border:1.5px dashed #c7d2e2;border-radius:12px;background:#fafbfd;
+      color:var(--muted);font-weight:600;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+    }
+    .photo-btn svg{width:18px;height:18px;color:var(--primary)}
+    .photo-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+    .photo-thumb{
+      position:relative;width:64px;height:64px;border-radius:10px;overflow:hidden;background:#eef1f7;border:1px solid var(--border);
+    }
+    .photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+    .photo-thumb button{
+      position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;
+      background:rgba(0,0,0,.6);color:#fff;border:none;font-size:13px;line-height:1;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;padding:0;
+    }
+
+    /* Sales list */
+    .sale{
+      border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:8px;background:#fff;
+    }
+    .sale-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+    .sale-bc{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;font-weight:600;}
+    .sale-price{font-weight:700;color:var(--primary);}
+    .sale-meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-top:4px;flex-wrap:wrap;}
+    .badge{display:inline-flex;align-items:center;gap:4px;background:var(--primary-50);color:var(--primary);padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;}
+    .badge.cash{background:#ecfdf5;color:#047857}
+    .badge.card{background:var(--primary-50);color:var(--primary)}
+    .sale-note{font-size:12px;color:var(--muted);margin-top:4px;font-style:italic;}
+    .sale-del{
+      background:transparent;border:none;color:var(--err);cursor:pointer;padding:4px;border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .sale-del svg{width:16px;height:16px}
+
+    /* Status pill */
+    .status-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;}
+    .status-pill.ok{background:#ecfdf5;color:#047857;}
+    .status-pill.warn{background:#fff7ed;color:#c2410c;}
+    .status-pill.err{background:#fef2f2;color:var(--err);}
+
+    .empty{text-align:center;color:var(--muted);font-size:13px;padding:20px;}
+    .toast-msg{font-size:13px;color:var(--muted);margin-top:8px;min-height:18px;}
+    .toast-msg.ok{color:var(--ok)} .toast-msg.err{color:var(--err)}
+
+    /* Modal */
+    .modal-bg{
+      position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:flex-end;justify-content:center;z-index:50;
+      padding:14px;
+    }
+    .modal-bg.show{display:flex}
+    .modal{
+      background:#fff;border-radius:18px;width:100%;max-width:480px;padding:18px;box-shadow:var(--shadow);
+      max-height:85vh;overflow:auto;
+    }
+    @media(min-width:520px){.modal-bg{align-items:center}}
+    .modal h3{margin:0 0 8px;font-size:17px;}
+    .modal p{margin:0 0 12px;font-size:14px;color:var(--muted);line-height:1.45;}
+    .modal .btn-row{flex-direction:column;}
+
+    .tip{
+      font-size:12px;color:var(--muted);background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;
+      border-radius:10px;padding:8px 10px;margin-top:8px;
+    }
   </style>
 </head>
 <body>
-<header>
-  <div class="wrap" style="padding:0 14px;">
-    <h1>VerkaufTool (Offline)</h1>
-    <div class="row" style="align-items:center; gap:10px; margin-top:4px;">
-      <div class="muted" id="welcomeLine"></div>
-      <button id="btnShopName" class="small" style="padding:6px 10px; border-radius:999px;">Shop ändern</button>
-    </div>
-    <div class="row">
-      <span class="pill" id="countPill">0 Verkäufe</span>
-      <span class="pill" id="lastBackupPill">Backup: —</span>
-      <span class="pill" id="photoSizePill">Fotos: 0 MB</span>
-      <span class="pill" id="queuePill">Status: Offline OK</span>
-    </div>
-    <div class="muted" id="hintLine" style="margin-top:6px;">
-      Tipp: Bluetooth-Scanner = Tastatur. Barcode-Feld aktiv lassen und scannen → Enter.
-    </div>
-  </div>
-</header>
 
 <div class="wrap">
 
-  <div class="card">
-    <div class="row">
-      <div class="col" style="flex:2 1 300px;">
-        <label>Barcode</label>
-        <input id="barcode" class="mono" inputmode="numeric" autocomplete="off" placeholder="Scannen oder eingeben" />
-      </div>
-      <div class="col" style="max-width: 180px;">
-        <label>Preis (€)</label>
-        <input id="price" inputmode="decimal" placeholder="z.B. 49,99" />
-      </div>
+  <!-- HEADER -->
+  <div class="app-header">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9v11a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V9"/><path d="M3 9h18"/><path d="M9 21v-6h6v6"/></svg>
     </div>
-    <div class="row" style="margin-top:10px;">
-      <div class="col">
-        <label>Notiz (optional)</label>
-        <textarea id="note" placeholder="z.B. Bar / kleiner Fleck / Kunde XY"></textarea>
-      </div>
+    <div style="min-width:0;flex:1;">
+      <div class="app-title">VerkaufsTool</div>
     </div>
+    <button class="icon-btn" id="btnShopName" title="Shop ändern">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+      <span id="shopLabel">Shop</span>
+    </button>
+  </div>
 
-    <div class="row" style="margin-top:10px;">
-      <div class="top-actions" style="width:100%;">
-        <button id="btnPhotos">Fotos hinzufügen (0/3)</button>
-        <input id="photoInput" type="file" accept="image/*" multiple capture="environment" style="display:none;" />
-        <div style="display:flex;flex-direction:column;gap:4px;min-width:160px;">
-          <label style="margin:0;">Zahlung</label>
-          <select id="paymentMethod" style="min-width:160px;">
-            <option value="Bar" selected>Bar</option>
-            <option value="Karte">Karte</option>
-          </select>
+  <!-- TOP EXPORT BUTTON -->
+  <button class="btn primary" id="btnExport" style="margin-bottom:14px;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+    Export erstellen
+  </button>
+  <div class="toast-msg" id="exportMsg" style="margin:-8px 0 10px;"></div>
+
+  <!-- ÜBERSICHT (compact) -->
+  <div class="card" style="padding:10px;">
+    <div class="stats stats-compact">
+      <div class="stat">
+        <div class="stat-row">Verkauft</div>
+        <div class="stat-val" id="sCount">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-row" style="color:var(--primary)">Umsatz</div>
+        <div class="stat-val" id="sRevenue">0,00 €</div>
+      </div>
+      <div class="stat">
+        <div class="stat-row">Bar</div>
+        <div class="stat-val" id="sCash">0,00 €</div>
+      </div>
+      <div class="stat">
+        <div class="stat-row">Karte</div>
+        <div class="stat-val" id="sCard">0,00 €</div>
+      </div>
+      <div class="stat" id="sStatusBox">
+        <div class="stat-row">Status</div>
+        <div><span class="status-pill ok" id="sStatusPill">OK</span></div>
+        <div class="stat-sub" id="sLastBackup" style="font-size:10px;">Backup: —</div>
+      </div>
+      <div class="stat">
+        <div class="stat-row">Fotos</div>
+        <div class="stat-val" id="sPhotos">0</div>
+        <div class="stat-sub" id="sPhotoSize" style="font-size:10px;">0 MB</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs" role="tablist">
+    <button type="button" class="tab active" data-tab="sale">Verkauf</button>
+    <button type="button" class="tab" data-tab="return">Rückgabe</button>
+  </div>
+
+  <!-- VERKAUF TAB -->
+  <div id="tab-sale" class="tab-panel">
+    <div class="card">
+      <h2 class="h">Neuer Verkauf</h2>
+
+      <div class="field">
+        <label for="barcode">Barcode</label>
+        <input id="barcode" inputmode="numeric" autocomplete="off" placeholder="Barcode scannen oder eingeben" />
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="price">Preis (€)</label>
+          <input id="price" inputmode="decimal" placeholder="z.B. 49,99" />
+        </div>
+        <div class="field">
+          <label>Zahlungsmethode</label>
+          <div class="pay">
+            <button type="button" data-pay="Bar" class="active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>
+              Bar
+            </button>
+            <button type="button" data-pay="Karte">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+              Karte
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div id="photoPreview" style="display:none; width:100%; margin-top:10px;"></div>
-
-    <div class="row" style="margin-top:10px;">
-      <div class="top-actions">
-        <button class="primary" id="btnAdd">Verkauft speichern</button>
-        <button id="btnReturn">Rückgabe</button>
-        <button id="btnExport">Export CSV</button>
-        <button id="btnExportAll">Export alles</button>
-        <button class="danger" id="btnClear">Alles löschen</button>
+      <div class="field">
+        <label for="note">Notiz (optional)</label>
+        <textarea id="note" placeholder="z.B. Kunde XY, kleiner Fleck …"></textarea>
       </div>
-      <div class="muted" id="statusMsg" style="flex:1 1 240px;"></div>
+
+      <div class="field">
+        <button type="button" class="photo-btn" id="btnPhotos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span id="photoBtnLabel">Fotos hinzufügen (0/3)</span>
+        </button>
+        <input id="photoInput" type="file" accept="image/*" multiple capture="environment" style="display:none;" />
+        <div class="photo-list" id="photoList"></div>
+      </div>
+
+      <button class="btn primary" id="btnAdd">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+        Speichern
+      </button>
+      <div class="toast-msg" id="saleMsg"></div>
     </div>
 
-    <div class="muted" style="margin-top:10px;">
-      Backup-Empfehlung: alle 3 Tage oder alle 100 Verkäufe → „Export CSV“.
+    <!-- Letzte Verkäufe -->
+    <div class="card">
+      <h2 class="h">Letzte Verkäufe</h2>
+      <div id="salesList"></div>
     </div>
   </div>
 
+  <!-- RÜCKGABE TAB -->
+  <div id="tab-return" class="tab-panel" style="display:none;">
+    <div class="card">
+      <h2 class="h">Rückgabe</h2>
+      <p style="color:var(--muted);font-size:13px;margin:0 0 12px;">
+        Barcode scannen oder eingeben. Der zuletzt registrierte Verkauf mit diesem Barcode wird nach Bestätigung entfernt.
+      </p>
+      <div class="field">
+        <label for="returnBarcode">Barcode</label>
+        <input id="returnBarcode" inputmode="numeric" autocomplete="off" placeholder="Barcode scannen oder eingeben" />
+      </div>
+      <button class="btn primary" id="btnReturn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg>
+        Rückgabe bestätigen
+      </button>
+      <div class="toast-msg" id="returnMsg"></div>
+    </div>
+  </div>
+
+  <!-- DANGER ZONE (always visible at bottom) -->
   <div class="card">
-    <div class="row">
-      <div class="col">
-        <label>Suche (Barcode / Notiz)</label>
-        <input id="search" placeholder="suchen..." />
-      </div>
-      <div class="col" style="max-width:220px;">
-        <label>Ansicht</label>
-        <select id="viewMode">
-          <option value="latest">Neueste zuerst</option>
-          <option value="oldest">Älteste zuerst</option>
-        </select>
-      </div>
-      <div class="col" style="max-width:220px;">
-        <label>Limit</label>
-        <select id="limit">
-          <option value="50">50</option>
-          <option value="100" selected>100</option>
-          <option value="200">200</option>
-          <option value="9999">Alle</option>
-        </select>
-      </div>
-    </div>
+    <h2 class="h" style="color:var(--err)">Gefahrenzone</h2>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 12px;">
+      Löscht alle Verkäufe und Fotos. Der Shop-Name bleibt erhalten. Vorher Backup empfohlen.
+    </p>
+    <button class="btn danger" id="btnClear">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      Alles löschen
+    </button>
+  </div>
+</div>
 
-    <div style="overflow:auto; margin-top:10px;">
-      <table>
-        <thead>
-          <tr>
-            <th>Zeit</th>
-            <th>Barcode</th>
-            <th class="right">Preis</th>
-            <th>Zahlung</th>
-            <th>Notiz</th>
-            <th class="right">Aktion</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
+<!-- Shop name modal -->
+<div class="modal-bg" id="modalShop">
+  <div class="modal">
+    <h3 id="modalShopTitle">Shop-Name eingeben</h3>
+    <p>Bitte den Namen des Shops/Lagers eingeben. Wird lokal auf diesem Gerät gespeichert.</p>
+    <div class="field">
+      <label for="shopInput">Shop-Name</label>
+      <input id="shopInput" placeholder="z.B. DieselStore" />
+    </div>
+    <div class="btn-row">
+      <button class="btn primary" id="btnShopSave">Speichern</button>
+      <button class="btn ghost" id="btnShopCancel" style="display:none;">Abbrechen</button>
     </div>
   </div>
+</div>
 
+<!-- Confirm modal -->
+<div class="modal-bg" id="modalConfirm">
+  <div class="modal">
+    <h3 id="confirmTitle">Bestätigen</h3>
+    <p id="confirmText"></p>
+    <div class="btn-row">
+      <button class="btn primary" id="confirmOk">Bestätigen</button>
+      <button class="btn ghost" id="confirmCancel">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Clear data modal -->
+<div class="modal-bg" id="modalClear">
+  <div class="modal">
+    <h3 style="color:var(--err)">Alles löschen?</h3>
+    <p>
+      Alle Verkäufe und Fotos werden unwiderruflich gelöscht. Der Shop-Name bleibt.
+      <br><br><b>Wir empfehlen dringend, vorher ein Backup zu erstellen.</b>
+    </p>
+    <div class="btn-row">
+      <button class="btn primary" id="btnBackupFirst">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+        Backup erstellen
+      </button>
+      <button class="btn danger" id="btnClearConfirm">Trotzdem löschen</button>
+      <button class="btn ghost" id="btnClearCancel">Abbrechen</button>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script>
-/** -----------------------------
- *  IndexedDB helper (без библиотек)
- *  ----------------------------- */
-const DB_NAME = "verkauf_tool_db";
-const DB_VER  = 2;
-const STORE   = "sales";
-const STORE_PHOTOS = "photos";
-
-function openDb() {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, DB_VER);
-    req.onupgradeneeded = () => {
-      const db = req.result;
-      if (!db.objectStoreNames.contains(STORE)) {
-        const st = db.createObjectStore(STORE, { keyPath: "id" });
-        st.createIndex("ts", "ts", { unique: false });
-        st.createIndex("barcode", "barcode", { unique: false });
+/* ============================================================
+ * IndexedDB
+ * ============================================================ */
+const DB_NAME="warehouse_tool_db", DB_VER=2, STORE="sales", STORE_PHOTOS="photos";
+function openDb(){
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open(DB_NAME,DB_VER);
+    r.onupgradeneeded=()=>{
+      const db=r.result;
+      if(!db.objectStoreNames.contains(STORE)){
+        const s=db.createObjectStore(STORE,{keyPath:"id"});
+        s.createIndex("ts","ts",{unique:false});
+        s.createIndex("barcode","barcode",{unique:false});
       }
-      if (!db.objectStoreNames.contains(STORE_PHOTOS)) {
-        const pst = db.createObjectStore(STORE_PHOTOS, { keyPath: "id" });
-        pst.createIndex("saleId", "saleId", { unique: false });
-        pst.createIndex("barcode", "barcode", { unique: false });
+      if(!db.objectStoreNames.contains(STORE_PHOTOS)){
+        const p=db.createObjectStore(STORE_PHOTOS,{keyPath:"id"});
+        p.createIndex("saleId","saleId",{unique:false});
+        p.createIndex("barcode","barcode",{unique:false});
       }
-};
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
+    };
+    r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);
   });
 }
-
-async function dbTxStore(storeName, mode, fn) {
-  const db = await openDb();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, mode);
-    const st = tx.objectStore(storeName);
-    const res = fn(st);
-    tx.oncomplete = () => resolve(res);
-    tx.onerror = () => reject(tx.error);
+async function dbTxStore(name,mode,fn){
+  const db=await openDb();
+  return new Promise((res,rej)=>{
+    const tx=db.transaction(name,mode);
+    const result=fn(tx.objectStore(name));
+    tx.oncomplete=()=>res(result);
+    tx.onerror=()=>rej(tx.error);
   });
 }
+const dbTx=(mode,fn)=>dbTxStore(STORE,mode,fn);
 
-async function dbTx(mode, fn) {
-  return dbTxStore(STORE, mode, fn);
-}
-
-
-function nowIso() {
-  const d = new Date();
-  // локальное время в ISO-подобном виде
-  const pad = (n)=>String(n).padStart(2,"0");
+/* ============================================================
+ * Utils
+ * ============================================================ */
+const $=(id)=>document.getElementById(id);
+const pad=(n)=>String(n).padStart(2,"0");
+function nowIso(){
+  const d=new Date();
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
-
-function uid() {
-  // достаточно уникально для офлайна
-  return `${Date.now()}_${Math.random().toString(16).slice(2)}`;
+function stampForFile(){
+  const d=new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}_${pad(d.getHours())}-${pad(d.getMinutes())}`;
 }
+function uid(){return `${Date.now()}_${Math.random().toString(16).slice(2)}`;}
+function parsePrice(s){const x=(s||"").trim().replace(",",".");if(!x)return NaN;const n=Number(x);return Number.isFinite(n)?n:NaN;}
+function fmtPrice(n){return Number.isFinite(n)?n.toFixed(2):"";}
+function fmtEur(n){return (Number.isFinite(n)?n:0).toLocaleString("de-DE",{style:"currency",currency:"EUR"});}
+function escapeHtml(s){return String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");}
+function sanitize(s){return String(s||"Shop").replace(/[\\/:*?"<>|]+/g,"_").replace(/\s+/g,"_").slice(0,40)||"Shop";}
+function fmtMb(b){return (b/(1024*1024)).toFixed(1);}
 
-/** -----------------------------
- *  UI
- *  ----------------------------- */
-const $ = (id)=>document.getElementById(id);
+/* ============================================================
+ * State + thresholds
+ * ============================================================ */
+const SHOP_KEY="shopName";
+const SALE_BACKUP_THRESHOLD=50;
+const DAYS_BACKUP_THRESHOLD=3;
+const PHOTO_WARN_MB=35;
+const PHOTO_CRIT_MB=50;
 
-
-// --- Shop Name (einmalig pro Gerät) ---
-const SHOP_KEY = "shopName";
-function getOrAskShopName() {
-  let name = (localStorage.getItem(SHOP_KEY) || "").trim();
-  if (!name) {
-    name = (prompt("Shop Name eingeben (einmalig):") || "").trim();
-    if (!name) name = "Shop";
-    localStorage.setItem(SHOP_KEY, name);
-  }
-  return name;
-}
-function setWelcome(name) {
-  const el = document.getElementById("welcomeLine");
-  if (el) el.textContent = `Herzlich willkommen, ${name}`;
-}
-
-function changeShopName() {
-  let name = (prompt("Neuen Shop Name eingeben:") || "").trim();
-  if (!name) return;
-  localStorage.setItem(SHOP_KEY, name);
-  setWelcome(name);
-  setStatus("Shop Name aktualisiert.", "ok");
-}
-
-
-// --- Fotos (max 3) ---
-let selectedFiles = []; // оригинальные File-объекты
-function updatePhotoButton() {
-  const btn = document.getElementById("btnPhotos");
-  if (btn) btn.textContent = `Fotos hinzufügen (${selectedFiles.length}/3)`;
-  const prev = document.getElementById("photoPreview");
-  if (!prev) return;
-  if (selectedFiles.length === 0) {
-    prev.style.display = "none";
-    prev.innerHTML = "";
-    return;
-  }
-  prev.style.display = "block";
-  prev.innerHTML = selectedFiles.map((f, i) => `
-    <div style="display:flex;align-items:center;gap:10px;border:1px solid #eee;border-radius:12px;padding:8px;margin:6px 0;">
-      <div style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">📷 ${escapeHtml(f.name || ("photo_"+(i+1)))}</div>
-      <button class="danger small" data-rm="${i}">Entfernen</button>
-    </div>
-  `).join("");
-  prev.querySelectorAll("button[data-rm]").forEach(b => {
-    b.addEventListener("click", () => {
-      const idx = Number(b.getAttribute("data-rm"));
-      selectedFiles.splice(idx, 1);
-      updatePhotoButton();
-    });
-  });
-}
-
-// Компрессия фото (важно для iOS)
-async function compressImageToJpegBlob(file, maxWidth = 1280, quality = 0.75) {
-  const img = await new Promise((resolve, reject) => {
-    const i = new Image();
-    i.onload = () => resolve(i);
-    i.onerror = reject;
-    i.src = URL.createObjectURL(file);
-  });
-
-  const scale = Math.min(1, maxWidth / img.width);
-  const w = Math.round(img.width * scale);
-  const h = Math.round(img.height * scale);
-
-  const canvas = document.createElement("canvas");
-  canvas.width = w;
-  canvas.height = h;
-  const ctx = canvas.getContext("2d");
-  ctx.drawImage(img, 0, 0, w, h);
-
-  const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", quality));
-  return blob;
-}
-
-const state = {
-  items: [],
-  count: 0,
-  photoBytes: 0,
-  photoCount: 0,
-  lastBackupAt: localStorage.getItem("lastBackupAt") || "",
-  lastBackupCount: Number(localStorage.getItem("lastBackupCount") || "0"),
+const state={
+  items:[], count:0, photoBytes:0, photoCount:0,
+  lastBackupAt:localStorage.getItem("lastBackupAt")||"",
+  lastBackupCount:Number(localStorage.getItem("lastBackupCount")||"0"),
+  payment:"Bar",
 };
+let selectedFiles=[]; // {file, previewUrl}
 
-function setStatus(msg, kind="muted") {
-  const el = $("statusMsg");
-  el.className = kind === "ok" ? "ok" : kind === "err" ? "err" : "muted";
-  el.textContent = msg;
+/* ============================================================
+ * Photos – compression
+ * ============================================================ */
+async function compressImageToJpegBlob(file,maxWidth=1280,quality=0.75){
+  const img=await new Promise((res,rej)=>{
+    const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=URL.createObjectURL(file);
+  });
+  const scale=Math.min(1,maxWidth/img.width);
+  const w=Math.round(img.width*scale), h=Math.round(img.height*scale);
+  const c=document.createElement("canvas"); c.width=w; c.height=h;
+  c.getContext("2d").drawImage(img,0,0,w,h);
+  return new Promise((res)=>c.toBlob(res,"image/jpeg",quality));
 }
 
-function parsePrice(str) {
-  // поддержка "49,99" и "49.99"
-  const s = (str || "").trim().replace(",", ".");
-  if (!s) return NaN;
-  const n = Number(s);
-  return Number.isFinite(n) ? n : NaN;
-}
-
-function fmtPrice(n) {
-  if (!Number.isFinite(n)) return "";
-  return n.toFixed(2);
-}
-
-function formatMb(bytes) {
-  return (bytes / (1024 * 1024)).toFixed(1);
-}
-
-// Верхние границы для фото (консервативно для iOS)
-const PHOTO_WARN_MB = 35;   // предупреждение
-const PHOTO_LIMIT_MB = 50;  // красная зона
-
-async function refreshPhotoStats() {
-  try {
-    const photos = await dbTxStore(STORE_PHOTOS, "readonly", (st) => {
-      return new Promise((resolve, reject) => {
-        const req = st.getAll();
-        req.onsuccess = () => resolve(req.result || []);
-        req.onerror = () => reject(req.error);
-      });
-    });
-
-    let bytes = 0;
-    for (const p of photos) {
-      if (p && p.blob && typeof p.blob.size === "number") bytes += p.blob.size;
+/* ============================================================
+ * Modals
+ * ============================================================ */
+function showModal(id){$(id).classList.add("show");}
+function hideModal(id){$(id).classList.remove("show");}
+function confirmModal(title,text,okLabel="Bestätigen",okClass="primary"){
+  return new Promise((res)=>{
+    $("confirmTitle").textContent=title;
+    $("confirmText").innerHTML=text;
+    const ok=$("confirmOk"), cancel=$("confirmCancel");
+    ok.textContent=okLabel; ok.className="btn "+okClass;
+    showModal("modalConfirm");
+    const onOk=()=>{cleanup();res(true);};
+    const onCancel=()=>{cleanup();res(false);};
+    function cleanup(){
+      hideModal("modalConfirm");
+      ok.removeEventListener("click",onOk);
+      cancel.removeEventListener("click",onCancel);
     }
-    state.photoBytes = bytes;
-    state.photoCount = photos.length;
-  } catch {
-    state.photoBytes = 0;
-    state.photoCount = 0;
-  }
+    ok.addEventListener("click",onOk);
+    cancel.addEventListener("click",onCancel);
+  });
 }
 
-function updatePills() {
-  $("countPill").textContent = `${state.count} Verkäufe`;
-
-  const lb = state.lastBackupAt ? state.lastBackupAt : "—";
-  $("lastBackupPill").textContent = `Backup: ${lb}`;
-
-  const mb = Number(formatMb(state.photoBytes));
-  const photoPill = $("photoSizePill");
-  if (photoPill) {
-    photoPill.textContent = `Fotos: ${mb} MB (${state.photoCount})`;
-    photoPill.classList.remove("warn", "err");
-    if (mb >= PHOTO_LIMIT_MB) photoPill.classList.add("err");
-    else if (mb >= PHOTO_WARN_MB) photoPill.classList.add("warn");
-  }
-
-  // просто информируем о сети
-  $("queuePill").textContent = navigator.onLine ? "Status: Online" : "Status: Offline OK";
+/* ============================================================
+ * Shop name flow
+ * ============================================================ */
+function getShopName(){return (localStorage.getItem(SHOP_KEY)||"").trim();}
+function ensureShopName(){
+  const name=getShopName();
+  if(name){ updateShopLabel(); return; }
+  $("modalShopTitle").textContent="Willkommen!";
+  $("shopInput").value="";
+  $("btnShopCancel").style.display="none";
+  showModal("modalShop");
+  setTimeout(()=>$("shopInput").focus(),100);
 }
-
-function escapeHtml(s) {
-  return String(s ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+function changeShopName(){
+  $("modalShopTitle").textContent="Shop-Name ändern";
+  $("shopInput").value=getShopName();
+  $("btnShopCancel").style.display="";
+  showModal("modalShop");
+  setTimeout(()=>$("shopInput").focus(),100);
 }
+function updateShopLabel(){$("shopLabel").textContent=getShopName()||"—";}
+$("btnShopSave").addEventListener("click",()=>{
+  const v=($("shopInput").value||"").trim();
+  if(!v){ $("shopInput").focus(); return; }
+  localStorage.setItem(SHOP_KEY,v);
+  hideModal("modalShop");
+  updateShopLabel();
+});
+$("btnShopCancel").addEventListener("click",()=>hideModal("modalShop"));
+$("btnShopName").addEventListener("click",changeShopName);
+$("shopInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("btnShopSave").click();});
 
-function render() {
-  const q = $("search").value.trim().toLowerCase();
-  const mode = $("viewMode").value;
-  const limit = Number($("limit").value);
+/* ============================================================
+ * Tabs
+ * ============================================================ */
+document.querySelectorAll(".tab").forEach(t=>{
+  t.addEventListener("click",()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    document.querySelectorAll(".tab-panel").forEach(p=>p.style.display="none");
+    $("tab-"+t.dataset.tab).style.display="";
+    if(t.dataset.tab==="sale") setTimeout(()=>$("barcode").focus(),50);
+    if(t.dataset.tab==="return") setTimeout(()=>$("returnBarcode").focus(),50);
+  });
+});
 
-  let list = state.items.slice();
+/* ============================================================
+ * Payment segmented
+ * ============================================================ */
+document.querySelectorAll(".pay button").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll(".pay button").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    state.payment=b.dataset.pay;
+  });
+});
 
-  if (q) {
-    list = list.filter(x => {
-      const hay = `${x.barcode} ${x.note ?? ""}`.toLowerCase();
-      return hay.includes(q);
+/* ============================================================
+ * Photos UI
+ * ============================================================ */
+function renderPhotoList(){
+  $("photoBtnLabel").textContent=`Fotos hinzufügen (${selectedFiles.length}/3)`;
+  const list=$("photoList");
+  list.innerHTML="";
+  selectedFiles.forEach((p,i)=>{
+    const div=document.createElement("div");
+    div.className="photo-thumb";
+    div.innerHTML=`<img src="${p.previewUrl}" alt=""/><button data-rm="${i}" title="Entfernen">×</button>`;
+    list.appendChild(div);
+  });
+  list.querySelectorAll("button[data-rm]").forEach(b=>{
+    b.addEventListener("click",()=>{
+      const i=Number(b.dataset.rm);
+      try{URL.revokeObjectURL(selectedFiles[i].previewUrl);}catch{}
+      selectedFiles.splice(i,1);
+      renderPhotoList();
     });
+  });
+}
+$("btnPhotos").addEventListener("click",()=>$("photoInput").click());
+$("photoInput").addEventListener("change",(e)=>{
+  const files=Array.from(e.target.files||[]);
+  let added=0, rejected=0;
+  for(const f of files){
+    if(selectedFiles.length>=3){ rejected++; continue; }
+    selectedFiles.push({file:f, previewUrl:URL.createObjectURL(f)});
+    added++;
   }
+  e.target.value="";
+  renderPhotoList();
+  if(rejected>0) toast("saleMsg","Maximal 3 Fotos pro Verkauf.","err");
+});
 
-  list.sort((a,b)=> mode === "latest" ? (b.ts - a.ts) : (a.ts - b.ts));
-  if (limit !== 9999) list = list.slice(0, limit);
+/* ============================================================
+ * Toast helper
+ * ============================================================ */
+function toast(id,msg,kind="muted"){
+  const el=$(id); if(!el) return;
+  el.textContent=msg;
+  el.className="toast-msg "+(kind==="ok"?"ok":kind==="err"?"err":"");
+  if(msg) setTimeout(()=>{ if(el.textContent===msg) el.textContent=""; },4000);
+}
 
-  const tb = $("tbody");
-  tb.innerHTML = "";
+/* ============================================================
+ * Stats / pills
+ * ============================================================ */
+async function refreshPhotoStats(){
+  try{
+    const photos=await dbTxStore(STORE_PHOTOS,"readonly",(st)=>new Promise((res,rej)=>{
+      const r=st.getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>rej(r.error);
+    }));
+    let bytes=0;
+    for(const p of photos) if(p&&p.blob&&typeof p.blob.size==="number") bytes+=p.blob.size;
+    state.photoBytes=bytes; state.photoCount=photos.length;
+  }catch{ state.photoBytes=0; state.photoCount=0; }
+}
+function computeStatus(){
+  const mb=state.photoBytes/(1024*1024);
+  const lastCount=state.lastBackupCount||0;
+  const salesSince=state.count-lastCount;
+  let daysSince=Infinity;
+  if(state.lastBackupAt){
+    const d=new Date(state.lastBackupAt.replace(" ","T"));
+    if(!isNaN(d.getTime())) daysSince=(Date.now()-d.getTime())/(1000*60*60*24);
+  }
+  if(mb>=PHOTO_CRIT_MB) return {kind:"err",label:"Speicher kritisch"};
+  if(mb>=PHOTO_WARN_MB||salesSince>=SALE_BACKUP_THRESHOLD||daysSince>=DAYS_BACKUP_THRESHOLD)
+    return {kind:"warn",label:"Backup empfohlen"};
+  return {kind:"ok",label:"Offline OK"};
+}
+function updateStats(){
+  const sales=state.items;
+  const total=sales.reduce((a,x)=>a+(Number(x.price)||0),0);
+  const cash=sales.filter(x=>x.payment==="Bar").reduce((a,x)=>a+(Number(x.price)||0),0);
+  const card=sales.filter(x=>x.payment==="Karte").reduce((a,x)=>a+(Number(x.price)||0),0);
+  $("sCount").textContent=sales.length;
+  $("sRevenue").textContent=fmtEur(total);
+  $("sCash").textContent=fmtEur(cash);
+  $("sCard").textContent=fmtEur(card);
+  $("sPhotos").textContent=state.photoCount;
+  $("sPhotoSize").textContent=`${fmtMb(state.photoBytes)} MB`;
+  const st=computeStatus();
+  const pill=$("sStatusPill");
+  pill.className="status-pill "+st.kind;
+  pill.textContent=st.label;
+  $("sLastBackup").textContent=`Backup: ${state.lastBackupAt||"—"}`;
+}
 
-  for (const it of list) {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td class="nowrap small">${escapeHtml(it.time)}</td>
-      <td class="mono">${escapeHtml(it.barcode)}</td>
-      <td class="right nowrap">${escapeHtml(fmtPrice(it.price))} €</td>
-      <td class="small">${escapeHtml(it.payment || "")}</td>
-      <td class="small">${escapeHtml(it.note || "")}</td>
-      <td class="right">
-        <button class="danger small" data-del="${it.id}">Löschen</button>
-      </td>
+/* ============================================================
+ * Render sales list
+ * ============================================================ */
+function renderSales(){
+  const list=$("salesList");
+  const items=state.items.slice().sort((a,b)=>b.ts-a.ts).slice(0,20);
+  if(items.length===0){ list.innerHTML=`<div class="empty">Noch keine Verkäufe.</div>`; return; }
+  list.innerHTML="";
+  for(const it of items){
+    const photoCount=(it.photoIds||[]).length;
+    const card=document.createElement("div");
+    card.className="sale";
+    card.innerHTML=`
+      <div class="sale-top">
+        <div class="sale-bc">${escapeHtml(it.barcode)}</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div class="sale-price">${fmtEur(it.price)}</div>
+          <button class="sale-del" data-del="${it.id}" title="Löschen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="sale-meta">
+        <span>${escapeHtml(it.time)}</span>
+        <span class="badge ${it.payment==="Bar"?"cash":"card"}">${escapeHtml(it.payment||"")}</span>
+        ${photoCount>0?`<span class="badge">📷 ${photoCount}</span>`:""}
+      </div>
+      ${it.note?`<div class="sale-note">${escapeHtml(it.note)}</div>`:""}
     `;
-    tb.appendChild(tr);
+    list.appendChild(card);
   }
-
-  tb.querySelectorAll("button[data-del]").forEach(btn => {
-  btn.addEventListener("click", async () => {
-    const id = btn.getAttribute("data-del");
-    const item = state.items.find(x => x.id === id);
-
-    if (!item) return;
-
-    const confirmDelete = confirm(
-      `Verkauf wirklich löschen?\n\n` +
-      `Barcode: ${item.barcode}\n` +
-      `Preis: ${fmtPrice(item.price)} €\n` +
-      `Zeit: ${item.time}`
-    );
-
-    if (!confirmDelete) return;
-
-    await deleteById(id);
-  });
-});
-}
-
-async function loadAll() {
-  const items = await dbTx("readonly", (st) => {
-    return new Promise((resolve, reject) => {
-      const req = st.getAll();
-      req.onsuccess = () => resolve(req.result || []);
-      req.onerror = () => reject(req.error);
+  list.querySelectorAll("button[data-del]").forEach(b=>{
+    b.addEventListener("click",async()=>{
+      const id=b.dataset.del;
+      const it=state.items.find(x=>x.id===id);
+      if(!it) return;
+      const ok=await confirmModal("Verkauf löschen?",
+        `Barcode: <b>${escapeHtml(it.barcode)}</b><br>Preis: ${fmtEur(it.price)}<br>Zeit: ${escapeHtml(it.time)}`,
+        "Löschen","danger");
+      if(!ok) return;
+      await deleteSaleById(id);
     });
   });
-
-  state.items = items;
-  state.count = items.length;
-  await refreshPhotoStats();
-  refreshPhotoStats().then(updatePills);
-  render();
-
-  maybeRemindBackup();
 }
 
-async function addSale() {
-  const barcode = $("barcode").value.trim();
-  const price = parsePrice($("price").value);
-  const note = $("note").value.trim();
-  const payment = ($("paymentMethod")?.value || "Bar").trim();
+/* ============================================================
+ * Load / refresh
+ * ============================================================ */
+async function loadAll(){
+  const items=await dbTx("readonly",(st)=>new Promise((res,rej)=>{
+    const r=st.getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>rej(r.error);
+  }));
+  state.items=items; state.count=items.length;
+  await refreshPhotoStats();
+  updateStats(); renderSales();
+}
 
-  if (!barcode) {
-    setStatus("Barcode ist leer.", "err");
-    $("barcode").focus();
-    return;
-  }
-  if (!Number.isFinite(price) || price <= 0) {
-    setStatus("Preis ist ungültig.", "err");
-    $("price").focus();
-    $("price").select();
-    return;
-  }
+/* ============================================================
+ * Add sale
+ * ============================================================ */
+async function addSale(){
+  const barcode=$("barcode").value.trim();
+  const price=parsePrice($("price").value);
+  const note=$("note").value.trim();
+  const payment=state.payment;
+  if(!barcode){ toast("saleMsg","Barcode fehlt.","err"); $("barcode").focus(); return; }
+  if(!Number.isFinite(price)||price<=0){ toast("saleMsg","Preis ungültig.","err"); $("price").focus(); $("price").select?.(); return; }
 
-    // умная защита от двойной продажи
-  const last = findLastSaleByBarcode(barcode);
-  if (last) {
-    const msg =
-      `Achtung: Dieser Barcode wurde bereits verkauft.\n\n` +
-      `Letzter Eintrag:\n` +
-      `Zeit: ${last.time}\n` +
-      `Preis: ${fmtPrice(last.price)} €\n` +
-      `Notiz: ${(last.note || "—")}\n\n` +
-      `OK = trotzdem speichern\n` +
-      `Abbrechen = Optionen`;
-
-    const forceSave = confirm(msg);
-
-    if (!forceSave) {
-      const doReturn = confirm(
-        `Möchtest du stattdessen eine Rückgabe machen?\n\n` +
-        `OK = Rückgabe (letzten Eintrag löschen)\n` +
-        `Abbrechen = nichts tun`
-      );
-
-      if (doReturn) {
-        await deleteById(last.id);
-        setStatus(`Rückgabe durchgeführt: ${barcode}`, "ok");
-      } else {
-        setStatus("Abgebrochen: Doppelverkauf verhindert.", "err");
-      }
-
-      $("barcode").focus();
-      $("barcode").select();
-      return;
-    }
-  }
-
-  // Fotos verarbeiten (optional)
-  const photoIds = [];
-  const photoFiles = [];
-  if (selectedFiles.length > 0) {
-    // max 3
-    const files = selectedFiles.slice(0, 3);
-    for (let i = 0; i < files.length; i++) {
-      const f = files[i];
-      try {
-        const blob = await compressImageToJpegBlob(f, 1280, 0.75);
-        if (!blob) continue;
-        const tsLabel = nowIso().replaceAll(" ", "_").replaceAll(":", "-");
-        const fileName = `${barcode}_${tsLabel}_${i+1}.jpg`;
-        const pid = uid();
-        await dbTxStore(STORE_PHOTOS, "readwrite", (st) => st.put({
-          id: pid,
-          saleId: null, // заполним после создания продажи
-          barcode,
-          fileName,
-          blob
-        }));
+  // Save photos first
+  const photoIds=[];
+  if(selectedFiles.length>0){
+    const files=selectedFiles.slice(0,3);
+    for(let i=0;i<files.length;i++){
+      try{
+        const blob=await compressImageToJpegBlob(files[i].file,1280,0.75);
+        if(!blob) continue;
+        const pid=uid();
+        await dbTxStore(STORE_PHOTOS,"readwrite",(st)=>st.put({id:pid,saleId:null,barcode,blob,index:i}));
         photoIds.push(pid);
-        photoFiles.push(`photos/${fileName}`);
-      } catch (e) {
-        console.warn("photo compress/save failed", e);
+      }catch(e){ console.warn("photo failed",e); }
+    }
+  }
+
+  const item={id:uid(),barcode,price,note,payment,ts:Date.now(),time:nowIso(),photoIds};
+
+  try{
+    await dbTx("readwrite",(st)=>st.put(item));
+    if(photoIds.length){
+      for(const pid of photoIds){
+        await dbTxStore(STORE_PHOTOS,"readwrite",(st)=>new Promise((res,rej)=>{
+          const r=st.get(pid);
+          r.onsuccess=()=>{const rec=r.result; if(rec){rec.saleId=item.id; st.put(rec);} res();};
+          r.onerror=()=>rej(r.error);
+        }));
       }
     }
+  }catch(e){
+    console.error(e);
+    toast("saleMsg","Speicher konnte nicht gesichert werden. Bitte Backup erstellen und Speicher prüfen.","err");
+    return;
   }
 
-  const item = {
-    id: uid(),
-    barcode,
-    price,
-    note,
-    payment,
-    ts: Date.now(),
-    time: nowIso(),
-    photoIds,
-    photoFiles
-  };
+  state.items.push(item); state.count++;
 
-  await dbTx("readwrite", (st) => st.put(item));
-  // Fotos mit saleId verknüpfen
-  if (item.photoIds && item.photoIds.length > 0) {
-    for (const pid of item.photoIds) {
-      await dbTxStore(STORE_PHOTOS, "readwrite", (st) => {
-        return new Promise((resolve, reject) => {
-          const r = st.get(pid);
-          r.onsuccess = () => {
-            const rec = r.result;
-            if (rec) { rec.saleId = item.id; st.put(rec); }
-            resolve();
-          };
-          r.onerror = () => reject(r.error);
-        });
-      });
-    }
-  }
-  state.items.push(item);
-  state.count++;
-
-  setStatus(`Gespeichert: ${barcode}`, "ok");
-
-  // UX: очистка и фокус на barcode
-  $("barcode").value = "";
-  $("price").value = "";
-  $("note").value = "";
-  selectedFiles = [];
-  updatePhotoButton();
+  // reset
+  $("barcode").value=""; $("price").value=""; $("note").value="";
+  selectedFiles.forEach(p=>{try{URL.revokeObjectURL(p.previewUrl);}catch{}});
+  selectedFiles=[]; renderPhotoList();
   $("barcode").focus();
 
   await refreshPhotoStats();
-  updatePills();
-  render();
-  maybeRemindBackup();
+  updateStats(); renderSales();
+  toast("saleMsg",`Gespeichert: ${barcode}`,"ok");
 }
 
-async function deleteById(id) {
-  // сначала найдём запись, чтобы удалить её фото
-  const sale = state.items.find(x => x.id === id);
-
-  await dbTx("readwrite", (st) => st.delete(id));
-
-  // удаляем фото этой продажи
-  if (sale && sale.photoIds && sale.photoIds.length > 0) {
-    for (const pid of sale.photoIds) {
-      await dbTxStore(STORE_PHOTOS, "readwrite", (st) => st.delete(pid));
-    }
+async function deleteSaleById(id){
+  const sale=state.items.find(x=>x.id===id);
+  await dbTx("readwrite",(st)=>st.delete(id));
+  if(sale&&sale.photoIds){
+    for(const pid of sale.photoIds) await dbTxStore(STORE_PHOTOS,"readwrite",(st)=>st.delete(pid));
   }
-
-  state.items = state.items.filter(x => x.id !== id);
-  state.count = state.items.length;
-  setStatus("Eintrag gelöscht.", "ok");
-  updatePills();
-  render();
-}
-
-async function returnByBarcode() {
-  const barcode = $("barcode").value.trim();
-  if (!barcode) {
-    setStatus("Für Rückgabe: Barcode eingeben/scannen.", "err");
-    $("barcode").focus();
-    return;
-  }
-
-  const candidates = state.items.filter(x => x.barcode === barcode);
-  if (candidates.length === 0) {
-    setStatus("Kein Verkauf mit diesem Barcode gefunden.", "err");
-    $("barcode").focus();
-    $("barcode").select();
-    return;
-  }
-
-  candidates.sort((a,b)=> b.ts - a.ts);
-  const target = candidates[0];
-
-  const ok = confirm(
-    `Rückgabe wirklich durchführen?
-
-` +
-    `Barcode: ${target.barcode}
-` +
-    `Preis: ${fmtPrice(target.price)} €
-` +
-    `Zeit: ${target.time}`
-  );
-  if (!ok) {
-    setStatus("Abgebrochen.", "muted");
-    $("barcode").focus();
-    $("barcode").select();
-    return;
-  }
-
-  await deleteById(target.id);
-
-  setStatus(`Rückgabe: ${barcode} entfernt.`, "ok");
-  $("barcode").value = "";
-  $("barcode").focus();
-}
-
-function toCsv(items) {
-  const header = ["shopName","time","barcode","price","payment","note","photoCount","photoFiles"];
-  const rows = items
-    .slice()
-    .sort((a,b)=> a.ts - b.ts)
-    .map(x => [
-      (localStorage.getItem(SHOP_KEY) || "").trim(),
-      x.time,
-      x.barcode,
-      fmtPrice(x.price),
-      (x.payment || ""),
-      (x.note ?? "").replaceAll("\n"," ").trim(),
-      String((x.photoFiles || []).length),
-      (x.photoFiles || []).join("|")
-    ]);
-
-  const escapeCsv = (v) => {
-    const s = String(v ?? "");
-    if (s.includes('"') || s.includes(";") || s.includes("\n")) {
-      return `"${s.replaceAll('"','""')}"`;
-    }
-    return s;
-  };
-
-  const lines = [header.map(escapeCsv).join(";")];
-  for (const r of rows) lines.push(r.map(escapeCsv).join(";"));
-  return lines.join("\n");
-}
-
-function downloadFile(name, mime, content) {
-  const blob = (content instanceof Blob) ? content : new Blob([content], { type: mime });
-const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = name;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-
-  setTimeout(()=>URL.revokeObjectURL(url), 1500);
-}
-
-function exportCsv(isBackup=false) {
-  const items = state.items;
-  const csv = toCsv(items);
-  const stamp = new Date();
-  const pad=(n)=>String(n).padStart(2,"0");
-  const file = `verkaeufe_${stamp.getFullYear()}-${pad(stamp.getMonth()+1)}-${pad(stamp.getDate())}_${pad(stamp.getHours())}${pad(stamp.getMinutes())}.csv`;
-
-  downloadFile(file, "text/csv;charset=utf-8", "\ufeff" + csv);
-
-  // отметим последний бэкап
-  state.lastBackupAt = nowIso();
-  localStorage.setItem("lastBackupAt", state.lastBackupAt);
-  localStorage.setItem("lastBackupCount", String(state.count));
-  state.lastBackupCount = state.count;
-
-  updatePills();
-  setStatus(isBackup ? "Backup CSV erstellt." : "CSV exportiert.", "ok");
-}
-
-
-async function exportZip() {
-  // JSZip должен быть загружен
-  if (typeof JSZip === "undefined") {
-    setStatus("ZIP-Library nicht geladen. Bitte einmal online öffnen und neu laden.", "err");
-    return;
-  }
-
-  if (state.items.length === 0) {
-    setStatus("Keine Verkäufe zum Export.", "err");
-    return;
-  }
-
-  setStatus("ZIP wird erstellt…", "muted");
-
-  try {
-    const zip = new JSZip();
-    const photosFolder = zip.folder("photos");
-
-    // Hinweis: CSV wird separat exportiert (nicht im ZIP)
-
-    // Добавляем фото
-    // Собираем уникальные photoIds из всех продаж
-    const allPhotoIds = [];
-    for (const s of state.items) {
-      for (const pid of (s.photoIds || [])) allPhotoIds.push(pid);
-    }
-
-    if (allPhotoIds.length > 0) {
-      // читаем пачкой
-      const photoRecords = await dbTxStore(STORE_PHOTOS, "readonly", (st) => {
-        return new Promise((resolve, reject) => {
-          const req = st.getAll();
-          req.onsuccess = () => resolve(req.result || []);
-          req.onerror = () => reject(req.error);
-        });
-      });
-
-      const needed = new Set(allPhotoIds);
-      for (const p of photoRecords) {
-        if (!needed.has(p.id)) continue;
-        // p.blob должен быть Blob
-        photosFolder.file(p.fileName, p.blob);
-      }
-    }
-
-    const stamp = new Date();
-    const pad=(n)=>String(n).padStart(2,"0");
-    const fileName = `photos_export_${stamp.getFullYear()}-${pad(stamp.getMonth()+1)}-${pad(stamp.getDate())}_${pad(stamp.getHours())}${pad(stamp.getMinutes())}.zip`;
-
-    const blob = await zip.generateAsync({ type: "blob" });
-
-    downloadFile(fileName, "application/zip", blob);
-
-    // отметим последний бэкап
-    state.lastBackupAt = nowIso();
-    localStorage.setItem("lastBackupAt", state.lastBackupAt);
-    localStorage.setItem("lastBackupCount", String(state.count));
-    state.lastBackupCount = state.count;
-    updatePills();
-
-    setStatus("Fotos-ZIP exportiert.", "ok");
-  } catch (err) {
-    console.error(err);
-    setStatus("Fehler beim ZIP-Export.", "err");
-  }
-}
-
-
-function maybeRemindBackup() {
-  // напоминание: каждые 100 продаж или каждые 3 дня
-  const COUNT_STEP = 100;
-  const DAYS_STEP  = 3;
-
-  // Если бэкап ещё ни разу не делали, не показываем предупреждение сразу при первом открытии.
-  // Ставим "базовую точку" на текущее количество продаж и начинаем считать с неё.
-  if (!state.lastBackupAt) {
-    const baselineSet = localStorage.getItem("backupBaselineSet");
-    if (!baselineSet) {
-      state.lastBackupCount = state.count;
-      localStorage.setItem("lastBackupCount", String(state.lastBackupCount));
-      localStorage.setItem("backupBaselineSet", "1");
-      localStorage.setItem("backupBaselineAt", nowIso());
-    }
-  }
-
-  const lastCount = state.lastBackupCount || 0;
-  const needByCount = (state.count - lastCount) >= COUNT_STEP;
-
-  let needByDays = false;
-  const last = state.lastBackupAt;
-  if (last) {
-    // last is "YYYY-MM-DD HH:mm:ss"
-    const d = new Date(last.replace(" ", "T"));
-    if (!Number.isNaN(d.getTime())) {
-      const diffDays = (Date.now() - d.getTime()) / (1000*60*60*24);
-      needByDays = diffDays >= DAYS_STEP;
-    }
-  } else {
-    // если ни разу не делали backup — напоминаем, только если прошло DAYS_STEP дней с момента первой установки/базовой точки
-    const baselineAt = localStorage.getItem("backupBaselineAt");
-    if (baselineAt) {
-      const d0 = new Date(baselineAt.replace(" ", "T"));
-      if (!Number.isNaN(d0.getTime())) {
-        const diffDays = (Date.now() - d0.getTime()) / (1000*60*60*24);
-        needByDays = diffDays >= DAYS_STEP;
-      }
-    } else {
-      needByDays = false;
-    }
-  }
-
-  if (needByCount || needByDays) {
-    $("hintLine").innerHTML =
-      `⚠️ Empfehlung: Bitte <b>Export CSV</b> machen (Backup). ` +
-      `Verkäufe seit letztem Backup: <b>${state.count - lastCount}</b>.`;
-  } else {
-    $("hintLine").textContent =
-      "Tipp: Bluetooth-Scanner = Tastatur. Barcode-Feld aktiv lassen und scannen → Enter.";
-  }
-}
-
-async function clearAll() {
-  const first = confirm("Wirklich ALLES löschen? (Diese Aktion kann nicht rückgängig gemacht werden.)");
-  if (!first) return;
-  const second = confirm("Letzte Warnung: Wirklich ALLES löschen?");
-  if (!second) return;
-
-  // Verkäufe + Fotos löschen
-  await dbTxStore(STORE_PHOTOS, "readwrite", (st) => st.clear());
-  await dbTx("readwrite", (st) => st.clear());
-
-  state.items = [];
-  state.count = 0;
-  selectedFiles = [];
-  updatePhotoButton();
+  state.items=state.items.filter(x=>x.id!==id);
+  state.count=state.items.length;
   await refreshPhotoStats();
-  updatePills();
-  render();
-  setStatus("Alles gelöscht.", "ok");
+  updateStats(); renderSales();
 }
 
-// events
-$("btnAdd").addEventListener("click", addSale);
-$("btnPhotos").addEventListener("click", () => $("photoInput").click());
-$("photoInput").addEventListener("change", (e) => {
-  const files = Array.from(e.target.files || []);
-  for (const f of files) {
-    if (selectedFiles.length >= 3) break;
-    selectedFiles.push(f);
-  }
-  // reset input so same photo can be re-selected
-  e.target.value = "";
-  updatePhotoButton();
-});
-
-$("btnReturn").addEventListener("click", returnByBarcode);
-$("btnExport").addEventListener("click", () => exportCsv(false));
-$("btnExportAll").addEventListener("click", async () => {
-  // сначала CSV отдельно (с BOM для Excel)
-  exportCsv(false);
-  // затем ZIP (nur Fotos)
-  await exportZip();
-  setStatus("Alles exportiert (CSV + Fotos-ZIP).", "ok");
-});
-$("btnClear").addEventListener("click", clearAll);
-$("btnShopName").addEventListener("click", changeShopName);
-
-
-$("search").addEventListener("input", render);
-$("viewMode").addEventListener("change", render);
-$("limit").addEventListener("change", render);
-
-// Enter flow:
-// - если фокус в barcode и есть price -> сохранить
-// - если фокус в price -> сохранить
-$("barcode").addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    // после скана часто приходит Enter
-    $("price").focus();
-    $("price").select();
-  }
-});
-$("price").addEventListener("keydown", (e) => {
-  if (e.key === "Enter") addSale();
-});
-
-window.addEventListener("online", updatePills);
-window.addEventListener("offline", updatePills);
-
-// init
-loadAll().then(() => {
-  const shopName = getOrAskShopName();
-  setWelcome(shopName);
-  updatePhotoButton();
-
-  $("barcode").focus();
-  updatePills();
-  setStatus("Bereit.", "muted");
-});
-
-function findLastSaleByBarcode(barcode) {
-  const matches = state.items.filter(x => x.barcode === barcode);
-  if (matches.length === 0) return null;
-  matches.sort((a,b) => b.ts - a.ts);
-  return matches[0];
+/* ============================================================
+ * Return
+ * ============================================================ */
+async function returnByBarcode(){
+  const bc=$("returnBarcode").value.trim();
+  if(!bc){ toast("returnMsg","Bitte Barcode eingeben.","err"); $("returnBarcode").focus(); return; }
+  const candidates=state.items.filter(x=>x.barcode===bc).sort((a,b)=>b.ts-a.ts);
+  if(candidates.length===0){ toast("returnMsg","Kein Verkauf mit diesem Barcode gefunden.","err"); return; }
+  const t=candidates[0];
+  const ok=await confirmModal("Diesen Verkauf wirklich als Rückgabe entfernen?",
+    `Barcode: <b>${escapeHtml(t.barcode)}</b><br>Preis: ${fmtEur(t.price)}<br>Zeit: ${escapeHtml(t.time)}`,
+    "Rückgabe bestätigen","danger");
+  if(!ok) return;
+  await deleteSaleById(t.id);
+  $("returnBarcode").value="";
+  toast("returnMsg",`Rückgabe: ${bc} entfernt.`,"ok");
 }
 
-</script>
-
-<script>
-  // PWA service worker
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js").catch(() => {});
-    });
+/* ============================================================
+ * CSV / Export
+ * ============================================================ */
+function buildCsv(items,shop){
+  const header=["shopName","time","barcode","price","payment","note","photoCount"];
+  const esc=(v)=>{
+    const s=String(v??"");
+    return /[";\n]/.test(s) ? `"${s.replaceAll('"','""')}"` : s;
+  };
+  const lines=[header.join(";")];
+  const sorted=items.slice().sort((a,b)=>a.ts-b.ts);
+  for(const x of sorted){
+    lines.push([
+      shop, x.time, x.barcode, fmtPrice(Number(x.price)),
+      (x.payment||""), (x.note||"").replaceAll("\n"," ").trim(),
+      String((x.photoIds||[]).length)
+    ].map(esc).join(";"));
   }
-</script>
+  return lines.join("\r\n");
+}
 
+function downloadBlob(name,blob){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url; a.download=name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+
+async function buildExportZip(prefix){
+  if(typeof JSZip==="undefined"){
+    toast("exportMsg","ZIP-Library nicht geladen. Bitte einmal online öffnen.","err");
+    return null;
+  }
+  if(state.items.length===0){
+    toast("exportMsg","Keine Verkäufe zum Export.","err");
+    return null;
+  }
+  const shopRaw=getShopName()||"Shop";
+  const shop=sanitize(shopRaw);
+  const stamp=stampForFile();
+  const photosFolderName=`Photos_${shop}_${stamp}`;
+  const csvName=`sales_${shop}_${stamp}.csv`;
+  const zipName=`${prefix}${shop}_${stamp}.zip`;
+
+  const zip=new JSZip();
+  zip.file(csvName,"\ufeff"+buildCsv(state.items,shopRaw));
+  const photosFolder=zip.folder(photosFolderName);
+
+  // Read all photos
+  const photos=await dbTxStore(STORE_PHOTOS,"readonly",(st)=>new Promise((res,rej)=>{
+    const r=st.getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>rej(r.error);
+  }));
+  const photosByIdx={};
+  for(const p of photos) photosByIdx[p.id]=p;
+
+  const usedNames=new Set();
+  function uniqueName(base,ext){
+    let name=`${base}.${ext}`;
+    if(!usedNames.has(name)){ usedNames.add(name); return name; }
+    let i=2;
+    while(usedNames.has(`${base}_dup${i}.${ext}`)) i++;
+    const n=`${base}_dup${i}.${ext}`; usedNames.add(n); return n;
+  }
+  for(const sale of state.items){
+    const ids=sale.photoIds||[];
+    for(let i=0;i<ids.length;i++){
+      const p=photosByIdx[ids[i]];
+      if(!p||!p.blob) continue;
+      const base=ids.length===1 ? `${sanitize(sale.barcode)}` : (i===0?`${sanitize(sale.barcode)}`:`${sanitize(sale.barcode)}_${i}`);
+      const fn=uniqueName(base,"jpg");
+      photosFolder.file(fn,p.blob);
+    }
+  }
+
+  const blob=await zip.generateAsync({type:"blob"});
+  downloadBlob(zipName,blob);
+  // mark backup
+  state.lastBackupAt=nowIso();
+  state.lastBackupCount=state.count;
+  localStorage.setItem("lastBackupAt",state.lastBackupAt);
+  localStorage.setItem("lastBackupCount",String(state.lastBackupCount));
+  updateStats();
+  return zipName;
+}
+
+async function doExport(){
+  const ok=await confirmModal("Export erstellen?","Alle Verkäufe und Fotos werden in eine ZIP-Datei verpackt und heruntergeladen.","Export starten","primary");
+  if(!ok) return;
+  toast("exportMsg","Export wird erstellt…","");
+  try{
+    const name=await buildExportZip("");
+    if(name) toast("exportMsg",`Export erstellt: ${name}`,"ok");
+  }catch(e){ console.error(e); toast("exportMsg","Fehler beim Export.","err"); }
+}
+
+/* ============================================================
+ * Clear all (with backup flow)
+ * ============================================================ */
+$("btnClear").addEventListener("click",()=>{ showModal("modalClear"); });
+$("btnClearCancel").addEventListener("click",()=>hideModal("modalClear"));
+$("btnBackupFirst").addEventListener("click",async()=>{
+  try{
+    const name=await buildExportZip("backup_");
+    if(!name) return;
+    hideModal("modalClear");
+    const ok=await confirmModal("Backup erstellt","Backup wurde erstellt. Daten jetzt löschen?","Jetzt löschen","danger");
+    if(ok) await wipeData();
+  }catch(e){ console.error(e); }
+});
+$("btnClearConfirm").addEventListener("click",async()=>{
+  hideModal("modalClear");
+  const ok=await confirmModal("Wirklich ohne Backup löschen?","Alle Verkäufe und Fotos werden unwiderruflich gelöscht.","Löschen","danger");
+  if(ok) await wipeData();
+});
+async function wipeData(){
+  await dbTxStore(STORE_PHOTOS,"readwrite",(st)=>st.clear());
+  await dbTx("readwrite",(st)=>st.clear());
+  state.items=[]; state.count=0;
+  selectedFiles.forEach(p=>{try{URL.revokeObjectURL(p.previewUrl);}catch{}});
+  selectedFiles=[]; renderPhotoList();
+  await refreshPhotoStats();
+  updateStats(); renderSales();
+  toast("exportMsg","Alle Daten gelöscht. Shop-Name bleibt.","ok");
+}
+
+/* ============================================================
+ * Events
+ * ============================================================ */
+$("btnAdd").addEventListener("click",addSale);
+$("btnReturn").addEventListener("click",returnByBarcode);
+$("btnExport").addEventListener("click",doExport);
+
+$("barcode").addEventListener("keydown",e=>{
+  if(e.key==="Enter"){ e.preventDefault(); $("price").focus(); $("price").select?.(); }
+});
+$("price").addEventListener("keydown",e=>{
+  if(e.key==="Enter"){ e.preventDefault(); addSale(); }
+});
+$("returnBarcode").addEventListener("keydown",e=>{
+  if(e.key==="Enter"){ e.preventDefault(); returnByBarcode(); }
+});
+
+window.addEventListener("online",updateStats);
+window.addEventListener("offline",updateStats);
+
+/* ============================================================
+ * Init
+ * ============================================================ */
+loadAll().then(()=>{
+  ensureShopName();
+  renderPhotoList();
+  setTimeout(()=>$("barcode").focus(),200);
+});
+
+/* PWA */
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
+  });
+}
+</script>
 </body>
 </html>
